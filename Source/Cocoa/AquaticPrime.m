@@ -36,24 +36,31 @@
 
 @implementation AquaticPrime
 
+@synthesize hashString = _hashString;
+@synthesize blacklist = _blacklist;
+@synthesize publicKeyRef = _publicKeyRef;
+@synthesize privateKeyRef = _privateKeyRef;
+@synthesize aqError = _aqError;
+@synthesize cachedPrivateKey = _cachedPrivateKey;
+
 - (id)init {
-    return [self initWithKey:nil privateKey:nil];
+    return [self initWithPublicKey:nil privateKey:nil];
 }
 
-- (id)initWithKey:(NSString *)key {
-    return [self initWithKey:key privateKey:nil];
+- (id)initWithPublicKey:(NSString *)key {
+    return [self initWithPublicKey:key privateKey:nil];
 }
 
-- (id)initWithKey:(NSString *)key privateKey:(NSString *)privateKey {
+- (id)initWithPublicKey:(NSString *)key privateKey:(NSString *)privateKey {
     if (![super init])
         return nil;
     
     _publicKeyRef = NULL;
     _privateKeyRef = NULL;
     _aqError = [[NSString alloc] init];
-    _hash = [[NSString alloc] init];
+    _hashString = [[NSString alloc] init];
     
-    [self setKey:key privateKey:privateKey];
+    [self setPublicKey:key privateKey:privateKey];
     
     return self;
 }
@@ -64,12 +71,12 @@
     self.privateKeyRef = NULL;
 }
 
-+ (id)aquaticPrimeWithKey:(NSString *)key privateKey:(NSString *)privateKey {
-    return [[AquaticPrime alloc] initWithKey:key privateKey:privateKey];
++ (id)aquaticPrimeWithPublicKey:(NSString *)key privateKey:(NSString *)privateKey {
+    return [[AquaticPrime alloc] initWithPublicKey:key privateKey:privateKey];
 }
 
-+ (id)aquaticPrimeWithKey:(NSString *)key {
-    return [[AquaticPrime alloc] initWithKey:key privateKey:nil];
++ (id)aquaticPrimeWithPublicKey:(NSString *)key {
+    return [[AquaticPrime alloc] initWithPublicKey:key privateKey:nil];
 }
 
 - (void)setPrivateKeyRef:(SecKeyRef)privateKeyRef {
@@ -97,11 +104,11 @@
     }
 }
 
-- (BOOL)setKey:(NSString *)key {
-    return [self setKey:key privateKey:nil];
+- (BOOL)setPublicKey:(NSString *)key {
+    return [self setPublicKey:key privateKey:nil];
 }
 
-- (BOOL)setKey:(NSString *)key privateKey:(NSString *)privateKey {
+- (BOOL)setPublicKey:(NSString *)key privateKey:(NSString *)privateKey {
     // Free any existing keys we have a reference to
     self.publicKeyRef = NULL;
     self.privateKeyRef = NULL;
@@ -250,7 +257,7 @@
     return key;
 }
 
-- (NSString *)key {
+- (NSString *)publicKey {
     // Exports the public key in PEM format (with -----BEGIN RSA PUBLIC KEY----- wrapper)
     // If you require the raw kay bits, it is possible to decode the base64 content,
     // then the ASN.1 formatted data to extract it. Note the RSA exponent is also encoded
@@ -540,7 +547,7 @@
     NSString *hashCheck = [hash hexDigitRepresentation];
     
     // Store the license hash in case we need it later
-    [self setHash:hashCheck];
+    [self setHashString:hashCheck];
     
     if (self.blacklist && [self.blacklist containsObject:hashCheck]) {
         cleanup();

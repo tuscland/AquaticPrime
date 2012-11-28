@@ -29,22 +29,20 @@
 
 @interface AquaticPrime : NSObject
 
-@property (nonatomic, strong) NSString *hash;
+@property (nonatomic, strong) NSString *hashString;
 @property (nonatomic, strong) NSArray *blacklist;
 
 // Creation
-+ (id)aquaticPrimeWithKey:(NSString *)key;
-+ (id)aquaticPrimeWithKey:(NSString *)key privateKey:(NSString *)privateKey;
-- (id)initWithKey:(NSString *)key;
-- (id)initWithKey:(NSString *)key privateKey:(NSString *)privateKey;
++ (id)aquaticPrimeWithPublicKey:(NSString *)key;
++ (id)aquaticPrimeWithPublicKey:(NSString *)key privateKey:(NSString *)privateKey;
+- (id)initWithPublicKey:(NSString *)key;
+- (id)initWithPublicKey:(NSString *)key privateKey:(NSString *)privateKey;
 
 // Getters & Setters
-- (BOOL)setKey:(NSString *)key;
-- (BOOL)setKey:(NSString *)key privateKey:(NSString *)privateKey;
-- (NSString *)key;
+- (BOOL)setPublicKey:(NSString *)key;
+- (BOOL)setPublicKey:(NSString *)key privateKey:(NSString *)privateKey;
+- (NSString *)publicKey;
 - (NSString *)privateKey;
-- (void)setHash:(NSString *)newHash;
-- (NSString *)hash;
 
 // Generating license data/files
 - (NSData*)licenseDataForDictionary:(NSDictionary *)dict;
