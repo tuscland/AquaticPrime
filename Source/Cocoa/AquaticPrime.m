@@ -53,21 +53,20 @@
 }
 
 - (id)initWithPublicKey:(NSString *)key privateKey:(NSString *)privateKey {
-    if (![super init])
-        return nil;
-    
-    _publicKeyRef = NULL;
-    _privateKeyRef = NULL;
-    _aqError = [[NSString alloc] init];
-    _hashString = [[NSString alloc] init];
-    
-    [self setPublicKey:key privateKey:privateKey];
-    
+    self = [super init];
+
+    if (self) {
+        _publicKeyRef = NULL;
+        _privateKeyRef = NULL;
+        _aqError = [[NSString alloc] init];
+        _hashString = [[NSString alloc] init];
+        [self setPublicKey:key privateKey:privateKey];
+    }
+
     return self;
 }
 
 - (void)dealloc {
-    // Release core foundation objects
     self.publicKeyRef = NULL;
     self.privateKeyRef = NULL;
 }
