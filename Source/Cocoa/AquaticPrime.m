@@ -28,11 +28,12 @@
 #import "NSData+hexDigits.h"
 
 @interface AquaticPrime()
-@property (nonatomic, assign) SecKeyRef publicKeyRef;
-@property (nonatomic, assign) SecKeyRef privateKeyRef;
-@property (nonatomic, strong) NSString *aqError;
-@property (nonatomic, strong) NSString *cachedPrivateKey; // Because we can't export it once we've imported it
+@property (nonatomic, readwrite, assign) SecKeyRef publicKeyRef;
+@property (nonatomic, readwrite, assign) SecKeyRef privateKeyRef;
+@property (nonatomic, readwrite, strong) NSString *aqError;
+@property (nonatomic, readwrite, strong) NSString *cachedPrivateKey; // Because we can't export it once we've imported it
 @end
+
 
 @implementation AquaticPrime
 
@@ -79,6 +80,8 @@
     return [[AquaticPrime alloc] initWithPublicKey:key privateKey:nil];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
 - (void)setPrivateKeyRef:(SecKeyRef)privateKeyRef {
     if (privateKeyRef != _privateKeyRef) {
         if (_privateKeyRef != NULL) {
@@ -103,6 +106,7 @@
         }
     }
 }
+#pragma clang diagnostic pop
 
 - (BOOL)setPublicKey:(NSString *)key {
     return [self setPublicKey:key privateKey:nil];
@@ -332,23 +336,6 @@
     return pkText;
 }
 
-- (BOOL)generateKeys {
-    self.publicKeyRef = NULL;
-    self.privateKeyRef = NULL;
-    
-    OSStatus oserr = noErr;
-
-    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:
-                                (id)kSecAttrKeyTypeRSA, (id)kSecAttrKeyType,
-                                [NSNumber numberWithInteger:1024], kSecAttrKeySizeInBits,
-                                nil];
-    oserr = SecKeyGeneratePair((__bridge CFDictionaryRef)parameters, &_publicKeyRef, &_privateKeyRef);
-    if (oserr != noErr) {
-        return NO;
-    }
-    return YES;
-}
-
 #pragma mark Signing
 
 - (NSData*)computedHashForDictionary:(NSDictionary*)dict {
@@ -474,7 +461,7 @@
     // Create the data from the dictionary
     NSError *err = nil;
     NSData *licenseFile = [NSPropertyListSerialization dataWithPropertyList:licenseDict
-                                                                     format:kCFPropertyListXMLFormat_v1_0
+                                                                     format:NSPropertyListXMLFormat_v1_0
                                                                     options:0
                                                                       error:&err];
     
@@ -620,6 +607,26 @@
 
 #pragma mark Error Handling
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
+
+- (BOOL)generateKeys {
+    self.publicKeyRef = NULL;
+    self.privateKeyRef = NULL;
+
+    OSStatus oserr = noErr;
+
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:
+                                (id)kSecAttrKeyTypeRSA, (id)kSecAttrKeyType,
+                                [NSNumber numberWithInteger:1024], kSecAttrKeySizeInBits,
+                                nil];
+    oserr = SecKeyGeneratePair((__bridge CFDictionaryRef)parameters, &_publicKeyRef, &_privateKeyRef);
+    if (oserr != noErr) {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)setAqError:(NSString *)aqError {
     _aqError = aqError;
 #ifndef NDEBUG
@@ -630,5 +637,7 @@
 - (NSString*)getLastError {
     return _aqError;
 }
+
+#pragma clang diagnostic pop
 
 @end

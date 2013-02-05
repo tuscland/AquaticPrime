@@ -29,8 +29,8 @@
 
 @interface AquaticPrime : NSObject
 
-@property (nonatomic, strong) NSString *hashString;
-@property (nonatomic, strong) NSArray *blacklist;
+@property (nonatomic, readwrite, strong) NSString *hashString;
+@property (nonatomic, readwrite, strong) NSArray *blacklist;
 
 // Creation
 + (id)aquaticPrimeWithPublicKey:(NSString *)key;
