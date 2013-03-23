@@ -79,8 +79,6 @@
     return [[AquaticPrime alloc] initWithPublicKey:key privateKey:nil];
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdirect-ivar-access"
 - (void)setPrivateKeyRef:(SecKeyRef)privateKeyRef {
     if (privateKeyRef != _privateKeyRef) {
         if (_privateKeyRef != NULL) {
@@ -105,7 +103,6 @@
         }
     }
 }
-#pragma clang diagnostic pop
 
 - (BOOL)setPublicKey:(NSString *)key {
     return [self setPublicKey:key privateKey:nil];
